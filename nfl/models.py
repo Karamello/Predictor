@@ -35,6 +35,7 @@ class Pick(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     choice = models.IntegerField()
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    is_correct = models.BooleanField()
 
 class Scores(models.Model):
     season = models.ForeignKey(Season, on_delete=models.CASCADE)
