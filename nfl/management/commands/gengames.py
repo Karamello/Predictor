@@ -11,14 +11,13 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         data = request.urlopen("http://www.nfl.com/liveupdate/scorestrip/ss.xml").read().decode()
         tree = et.ElementTree(et.fromstring(data))
-        root = tree.getroot()
-        for child in root:
-            week = child.attrib['w']
-            sea = Season.objects.get(year="2017")
-            for gameelement in child:
-                game = gameelement.attrib
-                team1 = Team.objects.get(initials=game['v'])
-                team2 = Team.objects.get(initials=game['h'])
-                timeuk = datetime.datetime.strptime(self.parsetime(game['eid'], game['t']), "%Y-%m-%d %I:%M%p %z")
-                newgame = Game(home_team=team2, away_team=team1, ko=timeuk, week=week, season=sea, home_score=game['hs'], away_score=game['vs'])
-                newgame.save()
+        gms = tree.find('gms')
+        week = gms.attrib['w']
+        sea = Season.objects.get(year=gms.attrib['y'])
+        for gameelement in gms:
+            game = gameelement.attrib
+            team1 = Team.objects.get(initials=game['v'])
+            team2 = Team.objects.get(initials=game['h'])
+            timeuk = datetime.datetime.strptime(self.parsetime(game['eid'], game['t']), "%Y-%m-%d %I:%M%p %z")
+            newgame = Game(home_team=team2, away_team=team1, ko=timeuk, week=week, season=sea, home_score=game['hs'], away_score=game['vs'], nfl_id=game['gsis'])
+            newgame.save()

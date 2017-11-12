@@ -2,21 +2,58 @@
 {% block content %}
     {% load static %}
       <div class="col-lg-12">
+          <div class="page-header">
+              <h1>NFL {{ season.year }} <small>Week {{ week }} fixtures</small></h1>
+          </div>
+          <div class="row">
           {% for game in games %}
               <div class="col-md-4 col-sm-6">
-              <div class="panel panel-default">
-                  <div class="panel-heading"><b>{{ game.away_team.short_name }} @ {{ game.home_team.short_name }}</b></div>
+              <div id="{{ game.nfl_id }}" class="panel panel-default">
+                  <div class="panel-heading"><b>{{ game.away_team.short_name }} @ {{ game.home_team.short_name }}</b> -
+                      {% if game.in_progress %}
+                      <b>LIVE</b>
+                      {% elif game.is_complete %}
+                          Final
+                      {% else %}
+                      {{ game.ko }}
+                      {% endif %}
+                  </div>
                 <div class="panel-body">
-                    {% if game.has_started %}
-                    <h3>{{ game.away_score }} - {{ game.home_score }}</h3>
-                    {% endif %}
-                    <img width="100px" src="{% get_static_prefix %}nfl/icons/{{ game.away_team.initials }}.svg" />
-                    @
-                    <img width="100px" src="{% get_static_prefix %}nfl/icons/{{ game.home_team.initials }}.svg" />
-                    <p>{{ game.ko }}</p>
+                    <h3 align="center"><span class="vs">{{ game.away_score }}</span> - <span class="hs">{{ game.home_score }}</span></h3>
+                    <div align="center" class="col-sm-12">
+                        <img width="100px" src="{% get_static_prefix %}nfl/icons/{{ game.away_team.initials }}.svg" />
+                        @
+                        <img width="100px" src="{% get_static_prefix %}nfl/icons/{{ game.home_team.initials }}.svg" />
+                    </div>
                 </div>
               </div>
               </div>
           {% endfor %}
+              </div>
       </div>
+{% endblock %}
+
+{% block scripts %}
+<script>$(document).ready(function() {
+    function updateStats()
+		{
+			$.getJSON("{% url 'updategames' %}", function(json){
+			    console.log(json)
+			      $.each( json, function( key, val ) {
+                      $.each (val, function(key1, val1) {
+                          $("#" + key + ' .' + key1).text(val1)
+                      })
+
+                  });
+			})
+
+
+
+
+
+		}
+
+        setInterval(updateStats, 30000)
+
+});</script>
 {% endblock %}

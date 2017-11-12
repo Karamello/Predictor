@@ -22,23 +22,27 @@ class Game(models.Model):
     away_team = models.ForeignKey(Team, related_name='away_team', on_delete=models.CASCADE)
     home_score = models.IntegerField()
     away_score = models.IntegerField()
-    stadium = models.CharField(max_length=50)
     season = models.ForeignKey(Season, on_delete=models.CASCADE)
     type = models.CharField(max_length=3)
     week = models.IntegerField()
     ko = models.DateTimeField()
+    nfl_id = models.IntegerField(unique=True, db_index=True)
+    status = models.CharField(max_length=3)
 
     def __str__(self):
         return "{} @ {}".format(self.away_team, self.home_team)
 
-    def has_started(self):
-        return self.ko <= timezone.now()
+    def in_progress(self):
+        return self.ko <= timezone.now() and 'F' not in self.status
+
+    def is_complete(self):
+        return 'F' in self.status
 
 class Pick(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     choice = models.IntegerField()
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    is_correct = models.BooleanField()
+    is_correct = models.BooleanField(default=False)
 
 class Scores(models.Model):
     season = models.ForeignKey(Season, on_delete=models.CASCADE)
