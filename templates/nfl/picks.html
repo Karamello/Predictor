@@ -1,0 +1,35 @@
+{% extends 'nfl/base.html' %}
+{% block content %}
+    {% load static %}
+      <div class="col-lg-12">
+      <div class="row">
+          <div class="page-header">
+              <h1>NFL {{ season.year }} <small>Week {{ week }} picks</small></h1>
+          </div>
+      </div>
+          <div class="row">
+              <table class="table table-hover">
+                  <tr>
+                      <th style="text-align: right">Away Team</th>
+                      <th style="text-align: right"></th>
+                      <th style="text-align: center">Score</th>
+                      <th></th>
+                      <th>Home Team</th>
+                  </tr>
+                  {% for game in games %}
+                      <tr id="{{ game.id }}">
+                      <td align="right" style="vertical-align: middle">{{ game.away_team }}</td>
+                      <td align="right" width="110px"><img width="100px" src="{% get_static_prefix %}nfl/icons/{{ game.away_team.initials }}.svg"/></td>
+                      <td align="center" style="vertical-align: middle">{{ game.away_score }} - {{ game.home_score }}</td>
+                      <td width="110px"><img width="100px" src="{% get_static_prefix %}nfl/icons/{{ game.home_team.initials }}.svg"/></td>
+                      <td style="vertical-align: middle">{{ game.home_team }}</td>
+                      {% if not game.has_started %}
+                      <td><button>Make pick</button></td>
+                      {%  endif %}
+                      </tr>
+
+                  {% endfor %}
+              </table>
+              </div>
+      </div>
+{% endblock %}
