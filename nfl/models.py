@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-
+from django.utils import timezone
 # Create your models here.
 
 class Team(models.Model):
@@ -30,6 +30,9 @@ class Game(models.Model):
 
     def __str__(self):
         return "{} @ {}".format(self.away_team, self.home_team)
+
+    def has_started(self):
+        return self.ko <= timezone.now()
 
 class Pick(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
