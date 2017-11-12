@@ -1,0 +1,22 @@
+{% extends 'nfl/base.html' %}
+{% block content %}
+    {% load static %}
+      <div class="col-lg-12">
+          {% for game in games %}
+              <div class="col-md-4 col-sm-6">
+              <div class="panel panel-default">
+                  <div class="panel-heading"><b>{{ game.away_team.short_name }} @ {{ game.home_team.short_name }}</b></div>
+                <div class="panel-body">
+                    {% if game.has_started %}
+                    <h3>{{ game.away_score }} - {{ game.home_score }}</h3>
+                    {% endif %}
+                    <img width="100px" src="{% get_static_prefix %}nfl/icons/{{ game.away_team.initials }}.svg" />
+                    @
+                    <img width="100px" src="{% get_static_prefix %}nfl/icons/{{ game.home_team.initials }}.svg" />
+                    <p>{{ game.ko }}</p>
+                </div>
+              </div>
+              </div>
+          {% endfor %}
+      </div>
+{% endblock %}
