@@ -23,7 +23,7 @@ class Game(models.Model):
     home_score = models.IntegerField()
     away_score = models.IntegerField()
     season = models.ForeignKey(Season, on_delete=models.CASCADE)
-    type = models.CharField(max_length=3)
+    type = models.CharField(max_length=4)
     week = models.IntegerField()
     ko = models.DateTimeField()
     nfl_id = models.IntegerField(unique=True, db_index=True)
