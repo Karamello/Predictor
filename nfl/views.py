@@ -15,7 +15,7 @@ def showgames(request, season, week):
     seao = get_object_or_404(Season, year=season)
     games = Game.objects.filter(season=seao,week=week)
     get_list_or_404(games)
-    return render(request, 'nfl/games.html', {'title':'Games','games':games, 'season':seao, 'week':week})
+    return render(request, 'nfl/games.html', {'title':'Week {} games'.format(week),'games':games, 'season':seao, 'week':week})
 
 def makepicks(request):
     seao = get_object_or_404(Season, year=2017)
@@ -23,19 +23,21 @@ def makepicks(request):
     get_list_or_404(games)
     return render(request, 'nfl/picks.html', {'title': 'Make your picks', 'games':games, 'week': 10})
 
-def updategames(request):
-    pot_games = Game.objects.filter(week=10).exclude(status__contains='F')
+def updategames(request, season, week):
+    pot_games = Game.objects.filter(season=Season.objects.get(year=season), week=week).exclude(status__contains='F')
     updates = {}
     for game in pot_games:
+        print("DEBUG: {}".format(game))
         if game:
             if 'P' == game.status and timezone.now() <= game.ko:
                 continue
             else:
-                data = urlre.urlopen("http://www.nfl.com/liveupdate/scorestrip/ss.xml").read().decode()
+                data = urlre.urlopen("http://www.nfl.com/ajax/scorestrip?season={}&seasonType=REG&week={}".format(season, week)).read().decode()
                 tree = et.ElementTree(et.fromstring(data))
                 gm = tree.find(".//*[@gsis='{}']".format(game.nfl_id))
                 temp = {}
                 was_modified = False
+
                 if game.home_score != int(gm.attrib['hs']):
                     game.home_score = gm.attrib['hs']
                     temp['hs'] = game.home_score
@@ -46,7 +48,7 @@ def updategames(request):
                     was_modified = True
                 if game.status != gm.attrib['q']:
                     game.status = gm.attrib['q']
-                    temp['q'] = game.status
+                    temp['q'] = "Final"
                     was_modified = True
                 if was_modified:
                     game.save()

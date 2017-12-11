@@ -19,5 +19,5 @@ class Command(BaseCommand):
             team1 = Team.objects.get(initials=game['v'])
             team2 = Team.objects.get(initials=game['h'])
             timeuk = datetime.datetime.strptime(self.parsetime(game['eid'], game['t']), "%Y-%m-%d %I:%M%p %z")
-            newgame = Game(home_team=team2, away_team=team1, ko=timeuk, week=week, season=sea, home_score=game['hs'], away_score=game['vs'], nfl_id=game['gsis'])
+            newgame = Game(home_team=team2, away_team=team1, ko=timeuk, week=week, season=sea, home_score=game['hs'], away_score=game['vs'], nfl_id=game['gsis'], status=game['q'])
             newgame.save()
