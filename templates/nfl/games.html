@@ -11,7 +11,7 @@
               <div id="{{ game.nfl_id }}" class="panel panel-default">
                   <div class="panel-heading"><b>{{ game.away_team.short_name }} @ {{ game.home_team.short_name }}</b> - <span class="q">
                       {% if game.in_progress %}
-                      <b>LIVE</b>
+                      <b>LIVE - {{ game.get_game_status_string }}</b>
                       {% elif game.is_complete %}
                           Final
                       {% else %}
@@ -42,7 +42,11 @@
 			    console.log(json)
 			      $.each( json, function( key, val ) {
                       $.each (val, function(key1, val1) {
-                          $("#" + key + ' .' + key1).text(val1)
+                          if(key1 == 'q') {
+                              $("#" + key + ' .' + key1).html(val1)
+                          } else {
+                              $("#" + key + ' .' + key1).text(val1)
+                          }
                       })
 
                   });

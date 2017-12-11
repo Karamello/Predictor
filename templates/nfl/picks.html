@@ -20,10 +20,16 @@
                       <tr id="{{ game.id }}">
                       <td align="right" style="vertical-align: middle">{{ game.away_team }}</td>
                       <td align="right" width="110px"><img width="100px" src="{% get_static_prefix %}nfl/icons/{{ game.away_team.initials }}.svg"/></td>
-                      <td align="center" style="vertical-align: middle">{{ game.away_score }} - {{ game.home_score }}</td>
+                      <td align="center" style="vertical-align: middle">
+                          {% if not game.in_progress and not game.is_complete %}
+                              {{ game.ko }}
+                          {% else %}
+                              {{ game.away_score }} - {{ game.home_score }}
+                          {% endif %}
+                      </td>
                       <td width="110px"><img width="100px" src="{% get_static_prefix %}nfl/icons/{{ game.home_team.initials }}.svg"/></td>
                       <td style="vertical-align: middle">{{ game.home_team }}</td>
-                      {% if not game.has_started %}
+                      {% if not game.in_progress and not game.is_complete %}
                       <td><button>Make pick</button></td>
                       {%  endif %}
                       </tr>
