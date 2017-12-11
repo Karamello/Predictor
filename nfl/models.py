@@ -38,6 +38,17 @@ class Game(models.Model):
     def is_complete(self):
         return 'F' in self.status
 
+    def get_game_status_string(self):
+        if self.status == '1':
+            return "1st Quarter"
+        elif self.status == '2':
+            return "2nd Quarter"
+        elif self.status == '3':
+            return "3rd Quarter"
+        else:
+            return "4th Quarter"
+
+
 class Pick(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     choice = models.IntegerField()
