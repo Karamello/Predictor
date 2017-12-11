@@ -5,6 +5,8 @@ from urllib import request as urlre
 from django.http import JsonResponse
 from django.utils import timezone
 
+
+
 # Create your views here.
 
 def showteams(request):
