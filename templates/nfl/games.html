@@ -9,7 +9,7 @@
           {% for game in games %}
               <div class="col-md-4 col-sm-6">
               <div id="{{ game.nfl_id }}" class="panel panel-default">
-                  <div class="panel-heading"><b>{{ game.away_team.short_name }} @ {{ game.home_team.short_name }}</b> -
+                  <div class="panel-heading"><b>{{ game.away_team.short_name }} @ {{ game.home_team.short_name }}</b> - <span class="q">
                       {% if game.in_progress %}
                       <b>LIVE</b>
                       {% elif game.is_complete %}
@@ -17,6 +17,7 @@
                       {% else %}
                       {{ game.ko }}
                       {% endif %}
+                  </span>
                   </div>
                 <div class="panel-body">
                     <h3 align="center"><span class="vs">{{ game.away_score }}</span> - <span class="hs">{{ game.home_score }}</span></h3>
@@ -37,7 +38,7 @@
 <script>$(document).ready(function() {
     function updateStats()
 		{
-			$.getJSON("{% url 'updategames' %}", function(json){
+			$.getJSON("/api/update/json/{{ season.year }}/{{ week }}", function(json){
 			    console.log(json)
 			      $.each( json, function( key, val ) {
                       $.each (val, function(key1, val1) {

@@ -5,5 +5,5 @@ urlpatterns = [
     url(r'^$', views.showteams, name='showteams'),
     url(r'^games/(?P<season>\d{4})/week/(?P<week>\d+)', views.showgames, name='showgames'),
     url(r'^picks/', views.makepicks, name='makepicks'),
-    url(r'^api/update/json', views.updategames, name='updategames')
+    url(r'^api/update/json/(?P<season>\d{4})/(?P<week>\d+)', views.updategames, name='updategames')
 ]
