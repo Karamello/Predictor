@@ -1,9 +1,10 @@
 from django.shortcuts import render, get_object_or_404, get_list_or_404
-from .models import Team, Game, Season
+from .models import Team, Game, Season, Pick
 import xml.etree.ElementTree as et
 from urllib import request as urlre
 from django.http import JsonResponse
 from django.utils import timezone
+from django.contrib.auth.decorators import login_required
 import json
 
 
@@ -20,6 +21,7 @@ def showgames(request, season, week):
     get_list_or_404(games)
     return render(request, 'nfl/games.html', {'title':'Week {} games'.format(week),'games':games, 'season':seao, 'week':week})
 
+@login_required(login_url='/user/login/')
 def makepicks(request):
     settings = {}
 
@@ -27,9 +29,13 @@ def makepicks(request):
         settings = json.load(config)
 
     seao = get_object_or_404(Season, year=settings['season'])
-    games = Game.objects.filter(season=seao, week=settings['week'])
-    get_list_or_404(games)
-    return render(request, 'nfl/picks.html', {'title': 'Make your picks', 'games':games, 'week': settings['week']})
+    games_list = Game.objects.filter(season=seao, week=settings['week'])
+    get_list_or_404(games_list)
+    games = []
+    for game in games_list:
+        pick = Pick.objects.get_or_create(user=request.user, game=game)[0]
+        games.append((game, pick))
+    return render(request, 'nfl/picks.html', {'title': 'Make your picks', 'season': seao, 'games':games, 'week': settings['week']})
 
 def updategames(request, season, week):
     pot_games = Game.objects.filter(season=Season.objects.get(year=season), week=week).exclude(status__contains='F')

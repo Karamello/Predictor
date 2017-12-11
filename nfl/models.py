@@ -13,7 +13,7 @@ class Team(models.Model):
 
 class Season(models.Model):
     year = models.CharField(max_length=4)
-
+    pretty_year = models.CharField(max_length=8)
     def __str__(self):
         return self.year
 
@@ -48,10 +48,17 @@ class Game(models.Model):
         else:
             return "4th Quarter"
 
+    def determine_leader(self):
+        if self.home_score > self.away_score:
+            return 2
+        elif self.away_score > self.home_score:
+            return 1
+        else:
+            return 0
 
 class Pick(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
-    choice = models.IntegerField()
+    choice = models.IntegerField(default=3)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     is_correct = models.BooleanField(default=False)
 

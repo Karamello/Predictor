@@ -1,13 +1,18 @@
 {% extends 'nfl/base.html' %}
 {% block content %}
     {% load static %}
-      <div class="col-lg-12">
-      <div class="row">
-          <div class="page-header">
-              <h1>NFL {{ season.year }} <small>Week {{ week }} picks</small></h1>
-          </div>
-      </div>
           <div class="row">
+          <div class="col-lg-10 col-lg-offset-2">
+            <div class="page-header">
+              <h1>NFL {{ season.pretty_year }} <small>Week {{ week }} picks</small></h1>
+            </div>
+          </div>
+          <div class="col-lg-2">
+            <p class="lead">{{ request.user.first_name | capfirst }}, it's time to make your picks!</p>
+          <p>Select your picks from the games below and submit them to register your choice with the system. Picks can be made up until the game kicks off.</p>
+              <p>Games rotate on a Wednesday during the season at 8am.</p>
+          </div>
+          <div class="col-lg-10">
               <table class="table table-hover">
                   <tr>
                       <th style="text-align: right">Away Team</th>
@@ -15,8 +20,9 @@
                       <th style="text-align: center">Score</th>
                       <th></th>
                       <th>Home Team</th>
+                      <th style="text-align: center">Your pick</th>
                   </tr>
-                  {% for game in games %}
+                  {% for game, pick in games %}
                       <tr id="{{ game.id }}">
                       <td align="right" style="vertical-align: middle">{{ game.away_team }}</td>
                       <td align="right" width="110px"><img width="100px" src="{% get_static_prefix %}nfl/icons/{{ game.away_team.initials }}.svg"/></td>
@@ -29,13 +35,30 @@
                       </td>
                       <td width="110px"><img width="100px" src="{% get_static_prefix %}nfl/icons/{{ game.home_team.initials }}.svg"/></td>
                       <td style="vertical-align: middle">{{ game.home_team }}</td>
-                      {% if not game.in_progress and not game.is_complete %}
-                      <td><button>Make pick</button></td>
+                      <td style="text-align: center">
+                      {% if not game.in_progress and not game.is_complete and pick.choice == 3 %}
+                      <button class="btn btn-default">Make pick</button>
+                      {% else %}
+                          {% if pick.choice == 0 %}
+                          Draw
+                              {% elif pick.choice == 1 %}
+                              <img width="90px" src="{% get_static_prefix %}nfl/icons/{{ game.away_team.initials }}.svg"/><br>
+                            {{ game.away_team }}
+                              {% elif pick.choice == 2 %}
+                               <img width="90px" src="{% get_static_prefix %}nfl/icons/{{ game.home_team.initials }}.svg"/><br>
+                              {{ game.home_team }}
+                              {% elif pick.choice == 3 %}
+                              Missed deadline :(
+                              {% endif %}
+
                       {%  endif %}
+                      </>
                       </tr>
 
                   {% endfor %}
               </table>
               </div>
-      </div>
+
+          </div>
+
 {% endblock %}
