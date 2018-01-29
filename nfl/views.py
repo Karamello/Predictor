@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, get_list_or_404
 from .models import Team, Game, Season, Pick
 import xml.etree.ElementTree as et
 from urllib import request as urlre
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 import json
@@ -36,6 +36,17 @@ def makepicks(request):
         pick = Pick.objects.get_or_create(user=request.user, game=game)[0]
         games.append((game, pick))
     return render(request, 'nfl/picks.html', {'title': 'Make your picks', 'season': seao, 'games':games, 'week': settings['week']})
+
+@login_required(login_url='/user/login/')
+def storepick(request, id):
+    print("hi")
+    if request.method == 'POST':
+        print(request.body)
+        game = get_object_or_404(Game, id=id)
+        pick = Pick.objects.get_or_create(user=request.user, game=game)[0]
+
+        pick.choice = request.body
+        return HttpResponseRedirect('/picks')
 
 def updategames(request, season, week):
     pot_games = Game.objects.filter(season=Season.objects.get(year=season), week=week).exclude(status__contains='F')

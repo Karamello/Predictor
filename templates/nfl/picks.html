@@ -37,7 +37,42 @@
                       <td style="vertical-align: middle">{{ game.home_team }}</td>
                       <td style="text-align: center">
                       {% if not game.in_progress and not game.is_complete and pick.choice == 3 %}
-                      <button class="btn btn-default">Make pick</button>
+                      <button class="btn btn-default" onclick="loadModal({{ game.id }})">Make pick</button>
+                          <div id="modal-{{ game.id }}" class="modal fade">
+                             <div class="modal-dialog">
+                                <!-- Modal content-->
+                                <div class="modal-content">
+                                    <form action="/" id="gam-{{game.id }}">
+                                  <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title">{{ game.away_team }} @ {{ game.home_team }}</h4>
+                                  </div>
+                                  <div class="modal-body">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                        <fieldset name="pick">
+                                            <div class="radio">
+                                                <label style="vertical-align: center; display: inline"><input type="radio" name="pick" value="1">
+                                                {{ game.away_team }}</label>
+                                            </div>
+                                            <div class="radio">
+                                                <label class="control-label"><input type="radio" id="home" name="pick" value="2">
+                                                {{ game.home_team }}</label>
+                                            </div>
+                                        </fieldset>
+                                        </div>
+
+                                  </div>
+                                  <div class="modal-footer">
+                                      <input type="submit" onclick="submitForm({{ game.id }})" class="btn btn-primary" value="Submit">
+                                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                  </div>
+                                    </form>
+                                </div>
+
+                              </div>
+
+                          </div>
                       {% else %}
                           {% if pick.choice == 0 %}
                           Draw
@@ -61,4 +96,12 @@
 
           </div>
 
+{% endblock %}
+
+{% block scripts %}
+        <script>
+            function loadModal(id) {
+                $('#modal-' + id).modal();
+            }
+        </script>
 {% endblock %}
